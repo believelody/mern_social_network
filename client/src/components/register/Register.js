@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { registerUser } from '../../store/actions/authAction';
@@ -36,12 +35,12 @@ class Register extends Component {
     const { name, email, password, password2 } = this.state;
 
     const newUser = {name, email, password, password2};
-    this.props.registerUser(newUser, this.props.history);
+    this.props.registerUser(newUser);
   }
 
   render() {
     const { name, email, password, password2, errors } = this.state;
-
+    const { verify } = this.props.auth;
     return (
       <div className="register">
         <div className="container">
@@ -82,6 +81,8 @@ class Register extends Component {
                   error={errors.password2}
                   onChange={this.handleChange}
                 />
+                { verify && <h3 className="display-7 text-success">{verify}</h3> }
+
                 <input type="submit" className="btn btn-info btn-block mt-4" />
               </form>
             </div>
@@ -104,8 +105,7 @@ const mapStateToProps = state => ({
 });
 
 const dispatchStateToProps = {
-  registerUser,
-
+  registerUser
 };
 
-export default connect(mapStateToProps, dispatchStateToProps)(withRouter(Register));
+export default connect(mapStateToProps, dispatchStateToProps)(Register);

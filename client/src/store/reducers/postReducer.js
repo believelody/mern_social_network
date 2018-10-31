@@ -17,6 +17,12 @@ export default (state = initialState, { type, payload }) => {
       return {
         ...state,
         posts: state.posts.filter(post => post._id !== payload)
+      };
+    case GET_POST:
+      return {
+        ...state,
+        post: payload,
+        loading: false
       }
     case GET_POSTS:
       return {

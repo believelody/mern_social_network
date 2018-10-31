@@ -20,6 +20,11 @@ const UserSchema = new Schema({
   date: {
     type: Date,
     default: Date.now
+  },
+  secretToken: String,
+  confirmed: {
+    type: Boolean,
+    default: false
   }
 });
 

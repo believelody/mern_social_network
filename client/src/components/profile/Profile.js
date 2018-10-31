@@ -2,13 +2,18 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getProfileByHandle } from '../../store/actions/profileAction';
+import { getProfileByHandle, getProfileById } from '../../store/actions/profileAction';
 import { Spinner, ProfileHeader, ProfileAbout, ProfileExp, ProfileEdu, ProfileGithub } from '../Export';
 
 class Profile extends Component {
 
   componentDidMount() {
-    this.props.getProfileByHandle(this.props.match.params.handle);
+    if (this.props.match.params.id && !this.props.profile.loading) {
+      this.props.getProfileById(this.props.match.params.id);
+    }
+    if (this.props.match.params.handle && this.props.match.params.handle !== "user" && !this.props.profile.loading){
+      this.props.getProfileByHandle(this.props.match.params.handle);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -19,6 +24,7 @@ class Profile extends Component {
 
   render() {
     const { profile, loading } = this.props.profile;
+    
     return (
       <div className="profile">
         <div className="container">
@@ -26,7 +32,12 @@ class Profile extends Component {
             <div className="col-md-12" style={{position: 'relative'}}>
               <div className="row">
                 <div className="col-6">
-                  <NavLink to="/profiles" className="btn btn-light mb-3 float-left">Back To Profiles</NavLink>
+                  {
+                    this.props.match.params.id ?
+                    <NavLink to="/feeds" className="btn btn-light mb-3 float-left">Back To Posts</NavLink>
+                    :
+                    <NavLink to="/profiles" className="btn btn-light mb-3 float-left">Back To Profiles</NavLink>
+                  }
                 </div>
                 <div className="col-6">
 
@@ -34,7 +45,8 @@ class Profile extends Component {
               </div>
               {
                 profile === null || loading ?
-                <Spinner /> :
+                <Spinner />
+                :
                 <Fragment>
                   <ProfileHeader profile={profile} />
                   <ProfileAbout profile={profile} />
@@ -65,11 +77,12 @@ class Profile extends Component {
 
 Profile.propTypes = {
   profile: PropTypes.object.isRequired,
-  getProfileByHandle: PropTypes.func.isRequired
+  getProfileByHandle: PropTypes.func.isRequired,
+  getProfileById: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   profile: state.profile
 });
 
-export default connect(mapStateToProps, { getProfileByHandle })(Profile);
+export default connect(mapStateToProps, { getProfileByHandle, getProfileById })(Profile);

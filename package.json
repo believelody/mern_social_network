@@ -8,7 +8,8 @@
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm install --prefix client && npm run build --prefix client"
   },
   "author": "Believe LODY",
   "license": "MIT",
@@ -23,9 +24,11 @@
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.22.2",
     "mongoose": "^5.2.6",
+    "nodemailer": "^4.6.7",
     "nodemon": "^1.14.7",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
+    "randomstring": "^1.1.5",
     "react-moment": "^0.7.9",
     "validator": "^10.4.0"
   }

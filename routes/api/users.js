@@ -4,8 +4,10 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const randomstring = require('randomstring');
 
 const keys = require('../../config/keys');
+const mailer = require('../../misc/mailer');
 
 //  Load Input Validation
 const validateRegisterInput = require('../../validations/registerHandler');
@@ -43,20 +45,41 @@ router.post('/register', (req, res) => {
           r: 'pg', // Rating
           d: 'mm' // Default
         });
+        let secretToken = randomstring.generate();
 
         const newUser = new User({
           name,
           email,
           avatar,
-          password
+          password,
+          secretToken,
+          confirmed: false
         });
 
         bcrypt.genSalt(10, (err, salt) => bcrypt.hash(newUser.password, salt, (err, hash) => {
-          if (err) throw err;
+          if (err) {
+            throw err
+          };
           newUser.password = hash;
+
           newUser
             .save()
-            .then(user => res.json(user))
+            .then(user => {
+              //  Compose email
+              const content = `
+                <h2>Hi there</h2>
+                <br />
+                <strong>Thanks you for registering</strong>
+                <br />
+                <br />
+                <p>Please verify your email by cliking on this link below:</p>
+                <br />
+                <a href="http://localhost:3000/verify/${secretToken}">http://localhost:3000/verify/${secretToken}</a>
+              `;
+              //  Send email (don't forget to replace 'believelody@gmail.com' by req.body.email in production case)
+              mailer.sendEmail('admin@gs.com', 'believelody@gmail.com', 'Verify your email', content);
+              res.json('Thanks for your subscription! Please verify your email!!')
+            })
             .catch(err => console.log(err));
         }));
       }
@@ -88,17 +111,24 @@ router.post('/login', (req, res) => {
       bcrypt.compare(password, user.password)
         .then(isMatch => {
           if (isMatch) {
-            // User Matched
-            const payload = {
-              id: user.id,
-              name: user.name,
-              avatar: user.avatar
-            }; // Create jwt payload
+            //  Check if user are confirmed
+            if (!user.confirmed) {
+              errors.notconfirmed = "You need to verify your email before continue";
+              return res.status(400).json(errors);
+            }
+            else {
+              // User Matched
+              const payload = {
+                id: user.id,
+                name: user.name,
+                avatar: user.avatar
+              }; // Create jwt payload
 
-            // Sign Token
-            jwt.sign(payload, keys.secret, { expiresIn: 3600 }, (err, token) => {
-              res.json({success: true, token: `Bearer ${token}`});
-            });
+              // Sign Token
+              jwt.sign(payload, keys.secret, { expiresIn: 3600 }, (err, token) => {
+                res.json({success: true, token: `Bearer ${token}`});
+              });
+            }
           }
           else {
             errors.password = "Invalid password";
@@ -118,6 +148,16 @@ router.get('/current', passport.authenticate('jwt', {session :false}), (req, res
     email: req.user.email,
     avatar: req.user.avatar
   });
-})
+});
+
+router.post('/confirmation', (req, res) => {
+  const token = req.body.token;
+  User.findOneAndUpdate(
+    { secretToken: token },
+    { secretToken: "", confirmed: true},
+    { new: true }
+  )
+  .then(user => user ? res.json(user) : res.status(400).json({}));
+});
 
 module.exports = router;

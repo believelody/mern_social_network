@@ -20,6 +20,7 @@ class Profiles extends Component {
   render() {
     const currentProfile = this.props.profile.profile;
     const { profiles, loading } = this.props.profile;
+
     return (
       <div className="profiles">
         <div className="container">
@@ -33,9 +34,7 @@ class Profiles extends Component {
                 <Fragment>
                   {
                     profiles.length > 0 ?
-                    profiles.filter(profile => currentProfile ? profile._id !== currentProfile._id : -1).map(profile =>
-                      <ProfileItem key={profile._id} profile={profile} />
-                    ) :
+                    profiles.map(profile => <ProfileItem key={profile._id} currentProfile={ currentProfile ? currentProfile : null} profile={profile} /> ) :
                     <h4>There are no profiles</h4>
                   }
                 </Fragment>

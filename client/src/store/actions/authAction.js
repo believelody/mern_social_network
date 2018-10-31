@@ -1,4 +1,4 @@
-import { GET_ERRORS, SET_CURRENT_USER } from './constants';
+import { GET_ERRORS, SET_CURRENT_USER, VERIFY, VERIFIED } from './constants';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from '../../utils/setAuthToken';
@@ -10,9 +10,9 @@ export const setCurrentUser = (decoded) => ({
 });
 
 //  Register User
-export const registerUser = (userData, history) => dispatch => {
+export const registerUser = (userData) => dispatch => {
   axios.post('/api/users/register', userData)
-    .then(res => history.push('/login'))
+    .then(res => dispatch({ type: VERIFY, payload: res.data }))
     .catch(err => dispatch({type: GET_ERRORS, payload: err.response.data}));
 }
 
@@ -50,4 +50,10 @@ export const deleteAccount = () => dispatch => {
       dispatch({ type: SET_CURRENT_USER, payload: {} })
     })
     .catch(err => dispatch({ type: GET_ERRORS, payload: err.response.data }))
+}
+
+export const confirmUser = (token) => dispatch => {
+  axios.post(`/api/users/confirmation`, { token })
+    .then(res => dispatch({type: VERIFIED, payload: true}))
+    .catch(err => dispatch({ type: GET_ERRORS, payload: err.response.data }));
 }

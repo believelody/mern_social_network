@@ -132,6 +132,7 @@ router.post('/comment/:id', passport.authenticate('jwt', { session: false }), (r
     //  If any errors, send 400 with errors object
     return res.status(400).json(errors);
   }
+  console.log(req.params.id);
 
   Post.findById(req.params.id)
     .then(post => {

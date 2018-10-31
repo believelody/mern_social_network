@@ -29,14 +29,15 @@ class Dashboard extends Component {
     return (
       <div className="dashboard">
       {
-        profile === null || loading ?
-        <Spinner /> :
+        profile === null && loading && <Spinner />
+      }
+      {
         <div className="container">
           <div className="row">
             <div className="col-sm-12">
               <h1 className="display-4">Dashboard</h1>
               {
-                Object.keys(profile).length > 0 ?
+                profile !== null && !loading &&
                 <Fragment>
                   <h3 className="lead text-muted">
                     Welcome <NavLink to={`/profile/${profile.handle}`}>{user.name}</NavLink>
@@ -66,7 +67,10 @@ class Dashboard extends Component {
                     </Fragment> :
                     null
                   }
-                </Fragment> :
+                </Fragment>
+              }
+              {
+                profile === null && !loading &&
                 <Fragment>
                   <h3 className="lead text-muted">Welcome {user.name}</h3>
                   <p>

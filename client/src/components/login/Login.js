@@ -41,7 +41,6 @@ class Login extends Component {
 
   render() {
     const { email, password, errors } = this.state;
-
     return (
       <div className="login">
         <div className="container">
@@ -66,6 +65,7 @@ class Login extends Component {
                   error={errors.password}
                   onChange={this.handleChange}
                 />
+                { errors.notconfirmed && <h3 className="display-7 text-danger">{errors.notconfirmed}</h3> }
                 <input type="submit" className="btn btn-info btn-block mt-4" />
               </form>
             </div>

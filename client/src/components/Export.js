@@ -29,7 +29,11 @@ import EduCredentials from './education/EduCredentials';
 import Posts from './posts/Posts';
 import PostForm from './posts/PostForm';
 import PostItem from './posts/PostItem';
+import Post from './posts/Post';
 import Feeds from './feeds/Feeds';
+import Comment from './comments/Comment';
+import CommentForm from './comments/CommentForm';
+import Verify from './verify/Verify';
 import NotFound from './not-found/NotFound';
 
 export {
@@ -64,6 +68,10 @@ export {
   Posts,
   PostForm,
   PostItem,
+  Post,
   Feeds,
+  Comment,
+  CommentForm,
+  Verify,
   NotFound
 }

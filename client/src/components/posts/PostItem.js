@@ -15,7 +15,6 @@ class PostItem extends React.Component {
 
   render() {
     const { auth, postItem } = this.props;
-
     return (
       <Fragment>
         <div className="row">
@@ -25,7 +24,7 @@ class PostItem extends React.Component {
                 alt={postItem.name} />
             </NavLink>
             <br />
-            <p className="text-center">{postItem.name}</p>
+            <p className="text-center">{postItem.user === auth.user.id ? "You" : postItem.name}</p>
           </div>
           <div className="col-md-10">
             <p className="lead">{postItem.text}</p>
